@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost Pet Board — Theme Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif;
+    background: #F2EFEA;
+    color: #4A403A;
+    padding: 24px 16px 48px;
+  }
+  h1 { text-align: center; font-size: 1.4rem; margin-bottom: 6px; }
+  .sub { text-align: center; color: #8C8078; font-size: 0.9rem; margin-bottom: 24px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .demo {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    min-height: 430px;
+  }
+  .demo header { padding: 18px; text-align: center; }
+  .demo header .paw { font-size: 1.4rem; }
+  .demo header h2 { font-size: 1.25rem; letter-spacing: 0.5px; }
+  .demo header p { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+  .demo .body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.7; margin-top: 4px;
+  }
+  .card {
+    border-radius: 12px; padding: 10px 12px;
+    display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .card .pic { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+  .card .name { font-weight: 700; font-size: 0.9rem; }
+  .card .meta { font-size: 0.75rem; opacity: 0.7; }
+  .badge { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; }
+  .btn {
+    border: none; border-radius: 10px; padding: 9px;
+    font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-top: auto;
+  }
+  .toggle-note { font-size: 0.75rem; opacity: 0.7; text-align: center; padding: 6px; }
+
+  /* ---- Theme 1: current warm peach ---- */
+  .t1 header { background: linear-gradient(135deg, #FFE8D6, #FFF6EC); border-bottom: 3px solid #F4845F; }
+  .t1 header h2 { color: #E06D48; }
+  .t1 { background: #FDF8F2; }
+  .t1 .card { background: #fff; color: #4A403A; }
+  .t1 .card .pic { background: #FFE8D6; }
+  .t1 .badge-lost { background: #FDEAE4; color: #E06D48; }
+  .t1 .badge-found { background: #E3F0FA; color: #4A7099; }
+  .t1 .btn { background: #F4845F; color: #fff; }
+
+  /* ---- Theme 2: dark night ---- */
+  .t2 { background: #1E1B2E; color: #EDEAF5; }
+  .t2 header { background: linear-gradient(135deg, #2A2440, #1E1B2E); border-bottom: 3px solid #A78BFA; }
+  .t2 header h2 { color: #C4B5FD; }
+  .t2 .card { background: #2A2440; color: #EDEAF5; }
+  .t2 .card .pic { background: #3B3157; }
+  .t2 .badge-lost { background: #4A2A3A; color: #F9A8D4; }
+  .t2 .badge-found { background: #23375A; color: #93C5FD; }
+  .t2 .btn { background: #8B5CF6; color: #fff; }
+
+  /* ---- Theme 3: fresh mint ---- */
+  .t3 { background: #F0FAF6; color: #23433A; }
+  .t3 header { background: linear-gradient(135deg, #CDEFE1, #E8FAF2); border-bottom: 3px solid #2FA37C; }
+  .t3 header h2 { color: #23775B; }
+  .t3 .card { background: #fff; color: #23433A; }
+  .t3 .card .pic { background: #D8F3E7; }
+  .t3 .badge-lost { background: #FDEAE4; color: #D25B3D; }
+  .t3 .badge-found { background: #DCF2FA; color: #2C7DA0; }
+  .t3 .btn { background: #2FA37C; color: #fff; }
+
+  /* ---- Theme 4: sunset lavender ---- */
+  .t4 { background: #FBF7FF; color: #3F3652; }
+  .t4 header { background: linear-gradient(135deg, #E8DDFF, #FFE3EE); border-bottom: 3px solid #9A6BE0; }
+  .t4 header h2 { color: #7C4DBB; }
+  .t4 .card { background: #fff; color: #3F3652; }
+  .t4 .card .pic { background: #EFE6FF; }
+  .t4 .badge-lost { background: #FFE3EE; color: #C24B7A; }
+  .t4 .badge-found { background: #E3E8FA; color: #4A5C99; }
+  .t4 .btn { background: #9A6BE0; color: #fff; }
+</style>
+</head>
+<body>
+  <h1>🎨 Lost Pet Board — Theme Preview</h1>
+  <p class="sub">Same app, four palettes. Tell me which number you like and I'll apply it to the live site.</p>
+  <div class="grid">
+    <div class="demo t1">
+      <header><div class="paw">🐾</div><h2>Lost Pet Board</h2><p>1 · Warm Peach (current)</p></header>
+      <div class="body">
+        <div class="label">Active posts</div>
+        <div class="card"><div class="pic">🐱</div><div><div class="name">Mochi <span class="badge badge-lost">Lost</span></div><div class="meta">📍 Bangsar, KL · grey tabby</div></div></div>
+        <div class="card"><div class="pic">🐶</div><div><div class="name">Buddy <span class="badge badge-found">Found</span></div><div class="meta">📍 Taman Tun · brown mix</div></div></div>
+        <button class="btn">➕ Add to board</button>
+      </div>
+    </div>
+    <div class="demo t2">
+      <header><div class="paw">🌙</div><h2>Lost Pet Board</h2><p>2 · Midnight Purple (dark mode)</p></header>
+      <div class="body">
+        <div class="label">Active posts</div>
+        <div class="card"><div class="pic">🐱</div><div><div class="name">Mochi <span class="badge badge-lost">Lost</span></div><div class="meta">📍 Bangsar, KL · grey tabby</div></div></div>
+        <div class="card"><div class="pic">🐶</div><div><div class="name">Buddy <span class="badge badge-found">Found</span></div><div class="meta">📍 Taman Tun · brown mix</div></div></div>
+        <button class="btn">➕ Add to board</button>
+      </div>
+    </div>
+    <div class="demo t3">
+      <header><div class="paw">🌿</div><h2>Lost Pet Board</h2><p>3 · Fresh Mint</p></header>
+      <div class="body">
+        <div class="label">Active posts</div>
+        <div class="card"><div class="pic">🐱</div><div><div class="name">Mochi <span class="badge badge-lost">Lost</span></div><div class="meta">📍 Bangsar, KL · grey tabby</div></div></div>
+        <div class="card"><div class="pic">🐶</div><div><div class="name">Buddy <span class="badge badge-found">Found</span></div><div class="meta">📍 Taman Tun · brown mix</div></div></div>
+        <button class="btn">➕ Add to board</button>
+      </div>
+    </div>
+    <div class="demo t4">
+      <header><div class="paw">🌸</div><h2>Lost Pet Board</h2><p>4 · Sunset Lavender</p></header>
+      <div class="body">
+        <div class="label">Active posts</div>
+        <div class="card"><div class="pic">🐱</div><div><div class="name">Mochi <span class="badge badge-lost">Lost</span></div><div class="meta">📍 Bangsar, KL · grey tabby</div></div></div>
+        <div class="card"><div class="pic">🐶</div><div><div class="name">Buddy <span class="badge badge-found">Found</span></div><div class="meta">📍 Taman Tun · brown mix</div></div></div>
+        <button class="btn">➕ Add to board</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
