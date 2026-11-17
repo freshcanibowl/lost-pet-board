@@ -108,15 +108,12 @@
   .status-toggle button.selected[data-status="found"] {
     background: #E3F0FA; border-color: #7FA8D8; color: #4A7099;
   }
-  .photo-preview {
-    display: flex; align-items: center; gap: 12px;
-  }
+  .photo-preview { display: flex; align-items: center; gap: 12px; }
   .photo-box {
     width: 72px; height: 72px;
     border-radius: 12px;
     border: 2px dashed #E0CFC0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.6rem;
     overflow: hidden;
     background: #FFFBF7;
     flex-shrink: 0;
@@ -147,6 +144,7 @@
     transition: background 0.15s;
   }
   .btn-primary:hover { background: var(--coral-dark); }
+  .btn-primary:disabled { opacity: 0.6; cursor: wait; }
   .form-msg {
     font-size: 0.85rem;
     padding: 9px 12px;
@@ -171,12 +169,11 @@
   .post-photo {
     width: 84px; height: 84px;
     border-radius: 12px;
-    object-fit: cover;
+    overflow: hidden;
     flex-shrink: 0;
     background: var(--peach);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem;
   }
+  .post-photo img { width: 100%; height: 100%; object-fit: cover; }
   .post-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .post-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .badge {
@@ -218,6 +215,15 @@
     color: var(--soft);
     font-size: 0.9rem;
   }
+  .banner {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .banner.error { display: block; background: #FDE8E8; color: #B04A4A; }
+  .banner.info { display: block; background: #FFF4E3; color: #9A7B4F; }
   footer {
     text-align: center;
     color: var(--soft);
@@ -234,6 +240,8 @@
 </header>
 
 <main>
+  <div class="banner" id="banner"></div>
+
   <!-- 1. POST A PET -->
   <section id="post-section">
     <h2><span class="icon icon-post">📝</span> Post a pet</h2>
@@ -291,7 +299,7 @@
         </div>
       </div>
       <div class="form-msg" id="form-msg"></div>
-      <button type="submit" class="btn-primary">➕ Add to board</button>
+      <button type="submit" class="btn-primary" id="submit-btn">➕ Add to board</button>
     </form>
   </section>
 
@@ -310,65 +318,54 @@
   </section>
 </main>
 
-<footer>Made with 💛 for pet lovers in Malaysia · All data stays in your browser</footer>
+<footer>Powered by Supabase · Posts are shared with everyone on the board 💛</footer>
 
+<!-- ===== SUPABASE SETUP =====
+     1. Create a free project at https://supabase.com
+     2. Run schema.sql (from this repo) in the Supabase SQL Editor
+     3. Paste your Project URL and anon key below -->
+<script>
+  const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';   // <-- paste your Project URL
+  const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';                  // <-- paste your anon public key
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   const imgEl = document.getElementById('photo-img');
-  const photoBox = document.getElementById('photo-box');
   let selectedPhoto = '🐱';
   let selectedStatus = 'lost';
+  let configured = !SUPABASE_URL.includes('YOUR-PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR-ANON');
 
-  const photoChoices = document.getElementById('photo-choices');
-  photoChoices.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    selectedPhoto = btn.dataset.photo;
-    photoChoices.querySelectorAll('button').forEach(b => b.classList.toggle('selected', b === btn));
-    renderPhoto();
-  });
-
-  function renderPhoto() {
-    imgEl.hidden = false;
-    imgEl.src = emojiToSvg(selectedPhoto);
-    imgEl.alt = 'Pet photo preview: ' + selectedPhoto;
+  const banner = document.getElementById('banner');
+  let sb = null;
+  if (configured) {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } else {
+    banner.className = 'banner error';
+    banner.textContent = '⚠️ Supabase is not configured yet — the board cannot load or save posts. Open index.html and paste your Project URL and anon key (see the SUPABASE SETUP comment).';
   }
 
   function emojiToSvg(emoji) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" rx="14" fill="#FFE8D6"/><text x="60" y="78" font-size="56" text-anchor="middle">${emoji}</text></svg>`;
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
   }
-
-  // Status toggle
+  function renderPhoto() {
+    imgEl.hidden = false;
+    imgEl.src = emojiToSvg(selectedPhoto);
+    imgEl.alt = 'Pet photo preview: ' + selectedPhoto;
+  }
+  document.getElementById('photo-choices').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    selectedPhoto = btn.dataset.photo;
+    document.querySelectorAll('#photo-choices button').forEach(b => b.classList.toggle('selected', b === btn));
+    renderPhoto();
+  });
   document.querySelectorAll('.status-toggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedStatus = btn.dataset.status;
       document.querySelectorAll('.status-toggle button').forEach(b => b.classList.toggle('selected', b === btn));
     });
   });
-
-  // Sample seed posts (area, note, contact in Malaysian context)
-  const posts = [
-    {
-      id: 1, status: 'lost', type: 'Cat 🐱', name: 'Mochi', area: 'Bangsar, KL',
-      note: 'Grey tabby with green eyes, wearing a red collar. Very shy — check under cars and bushes.',
-      contact: 'Aina · 012-345 6789', photo: '🐱', returned: false
-    },
-    {
-      id: 2, status: 'found', type: 'Dog 🐶', name: 'Unknown', area: 'Taman Tun, KL',
-      note: 'Friendly brown mixed breed found near the food court. No tag, well fed, currently safe at my porch.',
-      contact: 'Raj · 017-888 2210', photo: '🐶', returned: false
-    },
-    {
-      id: 3, status: 'lost', type: 'Bird 🐦', name: 'Kiwi', area: 'Shah Alam, Selangor',
-      note: 'Green lovebird escaped from cage in the evening. Responds to whistling.',
-      contact: 'Mei · 019-555 1234', photo: '🐦', returned: false
-    },
-    {
-      id: 4, status: 'found', type: 'Rabbit 🐰', name: 'Unknown', area: 'Johor Bahru',
-      note: 'White rabbit with floppy ears found hopping near the night market. Kept indoors now.',
-      contact: 'Farah · 013-222 9090', photo: '🐰', returned: false
-    }
-  ];
 
   const activeList = document.getElementById('active-list');
   const returnedList = document.getElementById('returned-list');
@@ -378,10 +375,43 @@
     if (status === 'lost') return '<span class="badge badge-lost">Lost</span>';
     return '<span class="badge badge-found">Found</span>';
   }
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
-  function render() {
-    const active = posts.filter(p => !p.returned);
-    const returned = posts.filter(p => p.returned);
+  function buildCard(p, isReturned) {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    const name = p.name ? p.name : 'Unnamed ' + (p.type || 'pet').replace(/[^\w\u00C0-\uFFFF ]/g, '').trim();
+    card.innerHTML = `
+      <div class="post-photo"><img src="${emojiToSvg(p.photo || '🐾')}" alt="${escapeHtml(p.type)}"></div>
+      <div class="post-body">
+        <div class="post-top">${statusBadge(p.status)}<span class="post-name">${escapeHtml(name)}</span></div>
+        <div class="post-area">📍 ${escapeHtml(p.area)} · ${escapeHtml(p.type)}</div>
+        <div class="post-note">${escapeHtml(p.note)}</div>
+        <div class="post-contact">💬 ${escapeHtml(p.contact)}</div>
+        ${isReturned ? '' : `<button type="button" class="btn-returned" data-id="${p.id}">🏡 Mark as returned</button>`}
+      </div>`;
+    if (!isReturned) {
+      card.querySelector('.btn-returned').addEventListener('click', async () => {
+        const btn = card.querySelector('.btn-returned');
+        btn.disabled = true;
+        const { error } = await sb.from('posts').update({ status: 'returned' }).eq('id', p.id);
+        if (error) {
+          alert('Could not mark as returned: ' + error.message);
+          btn.disabled = false;
+        } else {
+          loadPosts();
+          document.getElementById('returned-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+    return card;
+  }
+
+  function render(posts) {
+    const active = posts.filter(p => p.status !== 'returned');
+    const returned = posts.filter(p => p.status === 'returned');
 
     if (active.length === 0) {
       activeList.innerHTML = '<div class="empty-note">No active posts right now — the board is all clear! 🎉</div>';
@@ -389,7 +419,6 @@
       activeList.innerHTML = '';
       active.forEach(p => activeList.appendChild(buildCard(p, false)));
     }
-
     if (returned.length === 0) {
       returnedList.innerHTML = '<div class="empty-note">No returned pets yet. When a pet is marked returned, it moves here. 🐾</div>';
     } else {
@@ -398,81 +427,65 @@
     }
   }
 
-  function buildCard(p, isReturned) {
-    const card = document.createElement('div');
-    card.className = 'post-card';
-    const name = p.name ? p.name : 'Unnamed ' + p.type.replace(/[^\w\u00C0-\uFFFF ]/g, '').trim();
-    card.innerHTML = `
-      <div class="post-photo"><img src="${emojiToSvg(p.photo)}" alt="${p.type}" style="width:100%;height:100%;object-fit:cover;border-radius:12px"></div>
-      <div class="post-body">
-        <div class="post-top">${statusBadge(p.returned ? 'returned' : p.status)}<span class="post-name">${escapeHtml(name)}</span></div>
-        <div class="post-area">📍 ${escapeHtml(p.area)} · ${escapeHtml(p.type)}</div>
-        <div class="post-note">${escapeHtml(p.note)}</div>
-        <div class="post-contact">💬 ${escapeHtml(p.contact)}</div>
-        ${isReturned
-          ? ''
-          : `<button type="button" class="btn-returned" data-id="${p.id}">🏡 Mark as returned</button>`}
-      </div>`;
-    if (!isReturned) {
-      card.querySelector('.btn-returned').addEventListener('click', () => {
-        p.returned = true;
-        render();
-        returnedSectionGlow();
-      });
+  async function loadPosts() {
+    if (!sb) return;
+    const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+    if (error) {
+      banner.className = 'banner error';
+      banner.textContent = '⚠️ Could not load posts: ' + error.message + ' — did you run schema.sql in Supabase?';
+      return;
     }
-    return card;
+    banner.className = 'banner';
+    render(data || []);
   }
 
-  function returnedSectionGlow() {
-    const sec = document.getElementById('returned-section');
-    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-
-  // Form submit
   const form = document.getElementById('pet-form');
   const msg = document.getElementById('form-msg');
-  form.addEventListener('submit', (e) => {
+  const submitBtn = document.getElementById('submit-btn');
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!sb) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Supabase is not configured — see the banner at the top of the page.';
+      return;
+    }
     const area = document.getElementById('pet-area').value.trim();
     const note = document.getElementById('pet-note').value.trim();
     const contact = document.getElementById('pet-contact').value.trim();
-
     if (!area || !note || !contact) {
       msg.className = 'form-msg error';
       msg.textContent = 'Please fill in the area, a short note, and your contact so neighbours can reach you.';
       return;
     }
-
-    posts.unshift({
-      id: Date.now(),
+    submitBtn.disabled = true;
+    const { error } = await sb.from('posts').insert({
       status: selectedStatus,
       type: document.getElementById('pet-type').value,
       name: document.getElementById('pet-name').value.trim(),
       area, note, contact,
-      photo: selectedPhoto,
-      returned: false
+      photo: selectedPhoto
     });
-
+    submitBtn.disabled = false;
+    if (error) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Could not post: ' + error.message;
+      return;
+    }
     form.reset();
     selectedPhoto = '🐱';
     selectedStatus = 'lost';
     document.querySelectorAll('.status-toggle button').forEach(b => b.classList.toggle('selected', b.dataset.status === 'lost'));
     document.querySelectorAll('#photo-choices button').forEach(b => b.classList.toggle('selected', b.dataset.photo === '🐱'));
     renderPhoto();
-
     msg.className = 'form-msg success';
     msg.textContent = 'Posted! Your pet is now on the active board below. 🐾';
-    render();
+    await loadPosts();
     document.getElementById('active-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     setTimeout(() => { msg.className = 'form-msg'; msg.textContent = ''; }, 4000);
   });
 
   renderPhoto();
-  render();
+  if (sb) loadPosts();
 </script>
 </body>
 </html>
