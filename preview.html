@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost Pet Board — Mobile & Web Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Nunito', system-ui, sans-serif;
+    background: #F2EFEA;
+    color: #4A403A;
+    padding: 28px 16px 60px;
+  }
+  h1 { text-align: center; font-size: 1.5rem; }
+  .sub { text-align: center; color: #8C8078; font-size: 0.92rem; margin: 6px 0 30px; }
+  .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel { text-align: center; }
+  .panel h2 { font-size: 1.05rem; margin-bottom: 12px; }
+  .panel p.hint { font-size: 0.8rem; color: #8C8078; margin-top: 10px; }
+
+  /* Phone frame */
+  .phone {
+    width: 390px;
+    height: 760px;
+    border: 12px solid #1c1c1e;
+    border-radius: 44px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+  }
+  .phone .notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 150px; height: 24px;
+    background: #1c1c1e;
+    border-radius: 0 0 16px 16px;
+    z-index: 5;
+  }
+  .phone iframe {
+    width: 100%; height: 100%;
+    border: none;
+  }
+
+  /* Desktop frame */
+  .desktop {
+    width: 900px;
+    height: 640px;
+    border: 12px solid #1c1c1e;
+    border-bottom: 26px solid #1c1c1e;
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+  }
+  .desktop .bar {
+    height: 30px;
+    background: #2a2a2c;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+  }
+  .desktop .bar i {
+    width: 10px; height: 10px; border-radius: 50%;
+    display: inline-block;
+  }
+  .desktop .bar .r { background: #ff5f57; }
+  .desktop .bar .y { background: #febc2e; }
+  .desktop .bar .g { background: #28c840; }
+  .desktop iframe {
+    width: 100%;
+    height: calc(100% - 30px);
+    border: none;
+  }
+  @media (max-width: 1440px) {
+    .desktop { width: 100%; max-width: 900px; }
+  }
+</style>
+</head>
+<body>
+  <h1>📱💻 Lost Pet Board — Device Preview</h1>
+  <p class="sub">One codebase, two layouts: the phone version stacks everything in one column; the web version uses a wide two-column dashboard.</p>
+  <div class="wrap">
+    <div class="panel">
+      <h2>Mobile app preview</h2>
+      <div class="phone">
+        <div class="notch"></div>
+        <iframe src="index.html" title="Mobile preview of Lost Pet Board"></iframe>
+      </div>
+      <p class="hint">390 × 760 — iPhone-class viewport</p>
+    </div>
+    <div class="panel">
+      <h2>Web app preview</h2>
+      <div class="desktop">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <iframe src="index.html" title="Web preview of Lost Pet Board"></iframe>
+      </div>
+      <p class="hint">900 × 640 — desktop viewport</p>
+    </div>
+  </div>
+</body>
+</html>
