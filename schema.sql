@@ -10,6 +10,8 @@ create table if not exists public.posts (
   note text not null,
   contact text not null,
   photo text default '🐾',
+  photos jsonb default '[]'::jsonb,
+  reward text,
   created_at timestamptz not null default now()
 );
 

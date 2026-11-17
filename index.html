@@ -16,6 +16,8 @@
     --soft: #8C8078;
     --card: #FFFFFF;
     --green-bg: #EAF5EF;
+    --gold-bg: #FFF4DC;
+    --gold: #B8860B;
     --shadow: 0 4px 14px rgba(120, 90, 70, 0.10);
     --radius: 16px;
   }
@@ -62,6 +64,17 @@
   .icon-returned { background: var(--green-bg); }
   section > p.desc { color: var(--soft); font-size: 0.9rem; margin-bottom: 14px; }
 
+  /* Welcome note */
+  .welcome {
+    background: var(--green-bg);
+    border: 1.5px solid #CBE7D6;
+    color: var(--teal-dark);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
   /* Form */
   .form-card {
     background: var(--card);
@@ -73,26 +86,28 @@
     gap: 14px;
   }
   .form-row { display: flex; flex-direction: column; gap: 5px; }
-  .form-row label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+  .form-row > label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+  .hint { font-size: 0.78rem; color: var(--soft); font-weight: 400; }
   .form-row select, .form-row input, .form-row textarea {
     border: 1.5px solid #EADDD2;
     border-radius: 10px;
-    padding: 10px 12px;
+    padding: 11px 12px;
     font-size: 0.95rem;
     font-family: inherit;
     background: #FFFBF7;
     color: var(--ink);
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   .form-row select:focus, .form-row input:focus, .form-row textarea:focus {
     border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(244, 132, 95, 0.15);
   }
   textarea { resize: vertical; min-height: 60px; }
   .status-toggle { display: flex; gap: 10px; }
   .status-toggle button {
     flex: 1;
-    padding: 10px;
+    padding: 11px;
     border-radius: 10px;
     border: 1.5px solid #EADDD2;
     background: #FFFBF7;
@@ -108,29 +123,65 @@
   .status-toggle button.selected[data-status="found"] {
     background: #E3F0FA; border-color: #7FA8D8; color: #4A7099;
   }
-  .photo-preview { display: flex; align-items: center; gap: 12px; }
-  .photo-box {
-    width: 72px; height: 72px;
-    border-radius: 12px;
+  .photo-upload {
     border: 2px dashed #E0CFC0;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    border-radius: 12px;
     background: #FFFBF7;
-    flex-shrink: 0;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
   }
-  .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-  .photo-hint { font-size: 0.82rem; color: var(--soft); }
-  .photo-choices { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-  .photo-choices button {
+  .photo-upload:hover, .photo-upload.dragover {
+    border-color: var(--coral);
+    background: #FFF3E8;
+  }
+  .photo-upload .big { font-size: 1.6rem; }
+  .photo-upload p { font-size: 0.85rem; color: var(--soft); margin-top: 4px; }
+  .thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .thumb {
+    position: relative;
+    width: 84px; height: 84px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #EADDD2;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb button {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 0.75rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .emoji-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+  .emoji-row span.lbl { font-size: 0.78rem; color: var(--soft); }
+  .emoji-row button {
     border: 1.5px solid #EADDD2;
     background: #FFFBF7;
     border-radius: 999px;
-    padding: 6px 12px;
-    font-size: 1.05rem;
+    padding: 5px 10px;
+    font-size: 1rem;
     cursor: pointer;
     transition: all 0.15s;
   }
-  .photo-choices button.selected { border-color: var(--coral); background: var(--peach); }
+  .emoji-row button.selected { border-color: var(--coral); background: var(--peach); }
+  .reward-row { position: relative; }
+  .reward-row .rm {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--gold); font-weight: 700; font-size: 0.95rem;
+  }
+  .reward-row input { padding-left: 34px; }
   .btn-primary {
     background: var(--coral);
     color: #fff;
@@ -141,9 +192,10 @@
     font-weight: 700;
     cursor: pointer;
     font-family: inherit;
-    transition: background 0.15s;
+    transition: background 0.15s, transform 0.1s;
   }
   .btn-primary:hover { background: var(--coral-dark); }
+  .btn-primary:active { transform: scale(0.98); }
   .btn-primary:disabled { opacity: 0.6; cursor: wait; }
   .form-msg {
     font-size: 0.85rem;
@@ -161,21 +213,39 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 14px;
-    display: flex;
-    gap: 14px;
     animation: fadeIn 0.25s ease;
+    transition: box-shadow 0.15s;
   }
+  .post-card:hover { box-shadow: 0 6px 18px rgba(120, 90, 70, 0.16); }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .post-photo {
+  .gallery {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .gallery img {
+    width: 110px; height: 110px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    background: var(--peach);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .gallery img:hover { transform: scale(1.03); }
+  .gallery .fallback {
     width: 84px; height: 84px;
     border-radius: 12px;
-    overflow: hidden;
-    flex-shrink: 0;
     background: var(--peach);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    scroll-snap-align: start;
   }
-  .post-photo img { width: 100%; height: 100%; object-fit: cover; }
-  .post-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .post-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .post-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
   .badge {
     font-size: 0.72rem;
     font-weight: 700;
@@ -187,18 +257,23 @@
   .badge-lost { background: #FDEAE4; color: var(--coral-dark); }
   .badge-found { background: #E3F0FA; color: #4A7099; }
   .badge-returned { background: var(--green-bg); color: var(--teal-dark); }
-  .post-name { font-weight: 700; font-size: 1rem; }
+  .badge-reward {
+    background: var(--gold-bg);
+    color: var(--gold);
+    font-size: 0.78rem;
+    padding: 3px 10px;
+  }
+  .post-name { font-weight: 700; font-size: 1.05rem; }
   .post-area { font-size: 0.82rem; color: var(--soft); }
   .post-note { font-size: 0.9rem; color: var(--ink); }
   .post-contact { font-size: 0.85rem; color: var(--teal-dark); font-weight: 600; }
+  .card-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
   .btn-returned {
-    align-self: flex-start;
-    margin-top: 6px;
     background: var(--green-bg);
     color: var(--teal-dark);
     border: 1.5px solid var(--teal);
     border-radius: 999px;
-    padding: 6px 14px;
+    padding: 7px 14px;
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
@@ -206,14 +281,47 @@
     transition: all 0.15s;
   }
   .btn-returned:hover { background: var(--teal); color: #fff; }
+  .btn-contact {
+    background: #E3F0FA;
+    color: #4A7099;
+    border: 1.5px solid #7FA8D8;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-contact:hover { background: #7FA8D8; color: #fff; }
   .empty-note {
     background: #FFF9F1;
     border: 1.5px dashed #EAD9C8;
     border-radius: var(--radius);
-    padding: 20px;
+    padding: 22px 18px;
     text-align: center;
     color: var(--soft);
     font-size: 0.9rem;
+  }
+  /* Lightbox */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 20, 12, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    cursor: pointer;
+    padding: 20px;
+  }
+  #lightbox.show { display: flex; }
+  #lightbox img {
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
   }
   .banner {
     font-size: 0.85rem;
@@ -231,11 +339,54 @@
     padding: 24px 16px 0;
   }
 
+  /* Opening animation splash */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--peach), #FFF6EC);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    z-index: 100;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  #splash .paws { display: flex; gap: 14px; font-size: 2rem; }
+  #splash .paws span { opacity: 0; animation: pawStep 0.6s ease forwards; }
+  #splash .paws span:nth-child(1) { animation-delay: 0.15s; transform: rotate(-15deg); }
+  #splash .paws span:nth-child(2) { animation-delay: 0.45s; transform: rotate(10deg); }
+  #splash .paws span:nth-child(3) { animation-delay: 0.75s; transform: rotate(-10deg); }
+  #splash .paws span:nth-child(4) { animation-delay: 1.05s; transform: rotate(15deg); }
+  @keyframes pawStep {
+    0%   { opacity: 0; transform: translateY(18px) scale(0.6); }
+    60%  { opacity: 1; transform: translateY(-4px) scale(1.15); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  #splash .title {
+    font-size: 2rem; font-weight: 800; color: var(--coral-dark);
+    letter-spacing: 1px; opacity: 0; animation: titleIn 0.7s ease 1.2s forwards;
+  }
+  #splash .tagline {
+    color: var(--soft); font-size: 0.95rem; opacity: 0; animation: titleIn 0.7s ease 1.6s forwards;
+  }
+  @keyframes titleIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  body.revealed main section { animation: sectionIn 0.5s ease both; }
+  body.revealed main section:nth-of-type(1) { animation-delay: 0.05s; }
+  body.revealed main section:nth-of-type(2) { animation-delay: 0.2s; }
+  body.revealed main section:nth-of-type(3) { animation-delay: 0.35s; }
+  @keyframes sectionIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   /* ===== Web app layout (wider screens) ===== */
   @media (min-width: 900px) {
-    header {
-      padding: 40px 24px 32px;
-    }
+    header { padding: 40px 24px 32px; }
     header h1 { font-size: 2.2rem; }
     main {
       max-width: 1080px;
@@ -253,68 +404,6 @@
     #active-section { grid-area: active; }
     #returned-section { grid-area: returned; }
   }
-
-  /* Opening animation splash */
-  #splash {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, var(--peach), #FFF6EC);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    z-index: 100;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
-  }
-  #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-  #splash .paws {
-    display: flex;
-    gap: 14px;
-    font-size: 2rem;
-  }
-  #splash .paws span {
-    opacity: 0;
-    animation: pawStep 0.6s ease forwards;
-  }
-  #splash .paws span:nth-child(1) { animation-delay: 0.15s; transform: rotate(-15deg); }
-  #splash .paws span:nth-child(2) { animation-delay: 0.45s; transform: rotate(10deg); }
-  #splash .paws span:nth-child(3) { animation-delay: 0.75s; transform: rotate(-10deg); }
-  #splash .paws span:nth-child(4) { animation-delay: 1.05s; transform: rotate(15deg); }
-  @keyframes pawStep {
-    0%   { opacity: 0; transform: translateY(18px) scale(0.6); }
-    60%  { opacity: 1; transform: translateY(-4px) scale(1.15); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  #splash .title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--coral-dark);
-    letter-spacing: 1px;
-    opacity: 0;
-    animation: titleIn 0.7s ease 1.2s forwards;
-  }
-  #splash .tagline {
-    color: var(--soft);
-    font-size: 0.95rem;
-    opacity: 0;
-    animation: titleIn 0.7s ease 1.6s forwards;
-  }
-  @keyframes titleIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: none; }
-  }
-  /* Gentle staggered entrance for the page content after the splash */
-  body.revealed main section {
-    animation: sectionIn 0.5s ease both;
-  }
-  body.revealed main section:nth-of-type(1) { animation-delay: 0.05s; }
-  body.revealed main section:nth-of-type(2) { animation-delay: 0.2s; }
-  body.revealed main section:nth-of-type(3) { animation-delay: 0.35s; }
-  @keyframes sectionIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: none; }
-  }
 </style>
 </head>
 <body>
@@ -325,6 +414,9 @@
   <div class="tagline">Helping pets find their way home 💛</div>
 </div>
 
+<!-- Lightbox for full-size photos -->
+<div id="lightbox"><img id="lightbox-img" alt="Enlarged pet photo"></div>
+
 <header>
   <div class="paw">🐾</div>
   <h1>Lost Pet Board</h1>
@@ -333,6 +425,7 @@
 
 <main>
   <div class="banner" id="banner"></div>
+  <div class="welcome">👋 Welcome! Every pet deserves to be home. Post a sighting, offer a reward, and let neighbours help. No account needed.</div>
 
   <!-- 1. POST A PET -->
   <section id="post-section">
@@ -340,7 +433,7 @@
     <p class="desc">Share a lost or found pet with your community. Keep it short and kind.</p>
     <form class="form-card" id="pet-form" novalidate>
       <div class="form-row">
-        <label>Status</label>
+        <label>Is the pet lost or found? <span class="hint">Tap one</span></label>
         <div class="status-toggle">
           <button type="button" data-status="lost" class="selected">😢 Lost</button>
           <button type="button" data-status="found">👀 Found</button>
@@ -358,47 +451,55 @@
         </select>
       </div>
       <div class="form-row">
-        <label for="pet-name">Pet name (optional)</label>
+        <label for="pet-name">Pet name <span class="hint">(optional)</span></label>
         <input type="text" id="pet-name" placeholder="e.g. Mochi" maxlength="30">
       </div>
       <div class="form-row">
-        <label for="pet-area">Area</label>
+        <label for="pet-area">Area <span class="hint">Where was it last seen or found?</span></label>
         <input type="text" id="pet-area" placeholder="e.g. Bangsar, KL" maxlength="40">
       </div>
       <div class="form-row">
-        <label for="pet-note">Short note</label>
-        <textarea id="pet-note" placeholder="e.g. Orange tabby, wearing a blue collar, very shy" maxlength="140"></textarea>
+        <label for="pet-note">Short note <span class="hint">Colours, collar, habits — anything helps</span></label>
+        <textarea id="pet-note" placeholder="e.g. Orange tabby, wearing a blue collar, very shy" maxlength="200"></textarea>
       </div>
       <div class="form-row">
-        <label for="pet-contact">Contact</label>
+        <label for="pet-contact">Your contact <span class="hint">So neighbours can reach you</span></label>
         <input type="text" id="pet-contact" placeholder="Phone or WhatsApp, e.g. 012-345 6789" maxlength="40">
       </div>
       <div class="form-row">
-        <label>Photo (pick an emoji sticker)</label>
-        <div class="photo-preview">
-          <div class="photo-box" id="photo-box"><img id="photo-img" alt="Pet photo preview" hidden></div>
-          <div>
-            <div class="photo-hint">No uploads needed — choose a sticker for the photo preview.</div>
-            <div class="photo-choices" id="photo-choices">
-              <button type="button" data-photo="🐱" class="selected">🐱</button>
-              <button type="button" data-photo="🐶">🐶</button>
-              <button type="button" data-photo="🐦">🐦</button>
-              <button type="button" data-photo="🐰">🐰</button>
-              <button type="button" data-photo="🐹">🐹</button>
-              <button type="button" data-photo="🐢">🐢</button>
-            </div>
-          </div>
+        <label for="pet-reward">Reward <span class="hint">(optional) — show appreciation to kind finders</span></label>
+        <div class="reward-row">
+          <span class="rm">RM</span>
+          <input type="text" id="pet-reward" inputmode="decimal" placeholder="e.g. 200" maxlength="10">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Pet photos <span class="hint">Up to 3 — clear photos really help</span></label>
+        <div class="photo-upload" id="photo-upload" role="button" tabindex="0" aria-label="Add pet photos">
+          <div class="big">📷</div>
+          <p>Tap to add photos <span id="photo-count">(0 of 3)</span></p>
+          <input type="file" id="photo-input" accept="image/*" multiple hidden>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="emoji-row">
+          <span class="lbl">No photo? Use a sticker:</span>
+          <button type="button" data-photo="🐱" class="selected">🐱</button>
+          <button type="button" data-photo="🐶">🐶</button>
+          <button type="button" data-photo="🐦">🐦</button>
+          <button type="button" data-photo="🐰">🐰</button>
+          <button type="button" data-photo="🐹">🐹</button>
+          <button type="button" data-photo="🐢">🐢</button>
         </div>
       </div>
       <div class="form-msg" id="form-msg"></div>
-      <button type="submit" class="btn-primary" id="submit-btn">➕ Add to board</button>
+      <button type="submit" class="btn-primary" id="submit-btn">➕ Post to the board</button>
     </form>
   </section>
 
   <!-- 2. ACTIVE POSTS -->
   <section id="active-section">
     <h2><span class="icon icon-active">🔎</span> Active posts</h2>
-    <p class="desc">Pets people are currently looking for or have found nearby.</p>
+    <p class="desc">Pets people are currently looking for or have found nearby. Tap a photo to see it bigger.</p>
     <div class="posts-list" id="active-list"></div>
   </section>
 
@@ -413,27 +514,18 @@
 <footer>Build by Corwin 💛 · Powered by Supabase · Posts are shared with everyone on the board</footer>
 
 <!-- ===== SUPABASE SETUP =====
-     1. Create a free project at https://supabase.com
-     2. Run schema.sql (from this repo) in the Supabase SQL Editor
-     3. Paste your Project URL and anon key below -->
+     Project URL and publishable key are configured below.
+     Publishable keys are designed to be public; data is protected by RLS policies. -->
 <script>
   const SUPABASE_URL = 'https://uxtpvjlypefbfuaafazy.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_yKmkKJanJylwtrJ6PRqrvQ_oiCMlvw6';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-  // Opening animation: show splash on each visit for ~2.2s, then reveal the page
-  const splash = document.getElementById('splash');
-  setTimeout(() => {
-    splash.classList.add('hide');
-    document.body.classList.add('revealed');
-  }, 2200);
-</script>
-
-<script>
-  const imgEl = document.getElementById('photo-img');
-  let selectedPhoto = '🐱';
+  let selectedPhoto = '🐱';       // fallback sticker when no photos uploaded
   let selectedStatus = 'lost';
+  let photos = [];                // up to 3 compressed data-URLs
+  const MAX_PHOTOS = 3;
   let configured = !SUPABASE_URL.includes('YOUR-PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR-ANON');
 
   const banner = document.getElementById('banner');
@@ -442,25 +534,94 @@
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } else {
     banner.className = 'banner error';
-    banner.textContent = '⚠️ Supabase is not configured yet — the board cannot load or save posts. Open index.html and paste your Project URL and anon key (see the SUPABASE SETUP comment).';
+    banner.textContent = '⚠️ Supabase is not configured yet — the board cannot load or save posts.';
   }
 
   function emojiToSvg(emoji) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" rx="14" fill="#FFE8D6"/><text x="60" y="78" font-size="56" text-anchor="middle">${emoji}</text></svg>`;
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
   }
-  function renderPhoto() {
-    imgEl.hidden = false;
-    imgEl.src = emojiToSvg(selectedPhoto);
-    imgEl.alt = 'Pet photo preview: ' + selectedPhoto;
-  }
-  document.getElementById('photo-choices').addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    selectedPhoto = btn.dataset.photo;
-    document.querySelectorAll('#photo-choices button').forEach(b => b.classList.toggle('selected', b === btn));
-    renderPhoto();
+
+  // Photo upload handling: compress each image to max 600px JPEG data URL
+  const photoInput = document.getElementById('photo-input');
+  const uploadZone = document.getElementById('photo-upload');
+  const thumbs = document.getElementById('thumbs');
+  const photoCount = document.getElementById('photo-count');
+
+  uploadZone.addEventListener('click', () => photoInput.click());
+  uploadZone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') photoInput.click(); });
+  uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    addFiles(e.dataTransfer.files);
   });
+  photoInput.addEventListener('change', () => { addFiles(photoInput.files); photoInput.value = ''; });
+
+  function updatePhotoCount() {
+    photoCount.textContent = `(${photos.length} of ${MAX_PHOTOS})`;
+    uploadZone.style.display = photos.length >= MAX_PHOTOS ? 'none' : 'block';
+  }
+
+  function addFiles(fileList) {
+    const files = Array.from(fileList || []).filter(f => f.type.startsWith('image/'));
+    const room = MAX_PHOTOS - photos.length;
+    files.slice(0, room).forEach(f => {
+      const reader = new FileReader();
+      reader.onload = (e) => compressImage(e.target.result, (dataUrl) => {
+        photos.push(dataUrl);
+        renderThumbs();
+      });
+      reader.readAsDataURL(f);
+    });
+    if (files.length > room) {
+      alert(`You can add up to ${MAX_PHOTOS} photos per post.`);
+    }
+  }
+
+  function compressImage(dataUrl, cb) {
+    const img = new Image();
+    img.onload = () => {
+      const max = 600;
+      let { width, height } = img;
+      if (width > max || height > max) {
+        const scale = max / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      cb(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    img.src = dataUrl;
+  }
+
+  function renderThumbs() {
+    thumbs.innerHTML = '';
+    photos.forEach((src, i) => {
+      const t = document.createElement('div');
+      t.className = 'thumb';
+      t.innerHTML = `<img src="${src}" alt="Pet photo ${i + 1}"><button type="button" aria-label="Remove photo ${i + 1}">✕</button>`;
+      t.querySelector('button').addEventListener('click', () => {
+        photos.splice(i, 1);
+        renderThumbs();
+      });
+      thumbs.appendChild(t);
+    });
+    updatePhotoCount();
+  }
+
+  // Emoji fallback sticker
+  document.querySelectorAll('.emoji-row button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedPhoto = btn.dataset.photo;
+      document.querySelectorAll('.emoji-row button').forEach(b => b.classList.toggle('selected', b === btn));
+    });
+  });
+
+  // Status toggle
   document.querySelectorAll('.status-toggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedStatus = btn.dataset.status;
@@ -480,22 +641,48 @@
     return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  // Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  lightbox.addEventListener('click', () => lightbox.classList.remove('show'));
+  function openLightbox(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add('show');
+  }
+
+  function galleryHtml(p) {
+    if (p.photos && p.photos.length) {
+      return `<div class="gallery">${p.photos.map((src, i) =>
+        `<img src="${src}" alt="Pet photo ${i + 1}" data-full="${src}" tabindex="0">`).join('')}</div>`;
+    }
+    return `<div class="gallery"><div class="fallback">${escapeHtml(p.photo || '🐾')}</div></div>`;
+  }
+
   function buildCard(p, isReturned) {
     const card = document.createElement('div');
     card.className = 'post-card';
     const name = p.name ? p.name : 'Unnamed ' + (p.type || 'pet').replace(/[^\w\u00C0-\uFFFF ]/g, '').trim();
+    const reward = p.reward && String(p.reward).trim()
+      ? `<span class="badge badge-reward">🎁 Reward RM ${escapeHtml(p.reward)}</span>` : '';
+    const digits = String(p.contact || '').replace(/\D/g, '');
+    const wa = digits.startsWith('6') ? digits : '6' + digits; // Malaysian WhatsApp format
     card.innerHTML = `
-      <div class="post-photo"><img src="${emojiToSvg(p.photo || '🐾')}" alt="${escapeHtml(p.type)}"></div>
-      <div class="post-body">
-        <div class="post-top">${statusBadge(p.status)}<span class="post-name">${escapeHtml(name)}</span></div>
-        <div class="post-area">📍 ${escapeHtml(p.area)} · ${escapeHtml(p.type)}</div>
-        <div class="post-note">${escapeHtml(p.note)}</div>
-        <div class="post-contact">💬 ${escapeHtml(p.contact)}</div>
-        ${isReturned ? '' : `<button type="button" class="btn-returned" data-id="${p.id}">🏡 Mark as returned</button>`}
-      </div>`;
+      ${galleryHtml(p)}
+      <div class="post-top">${statusBadge(p.status)}${reward}<span class="post-name">${escapeHtml(name)}</span></div>
+      <div class="post-area">📍 ${escapeHtml(p.area)} · ${escapeHtml(p.type)}</div>
+      <div class="post-note">${escapeHtml(p.note)}</div>
+      <div class="post-contact">💬 ${escapeHtml(p.contact)}</div>
+      ${isReturned ? '' : `
+      <div class="card-actions">
+        <a class="btn-contact" href="https://wa.me/${escapeHtml(wa)}" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <button type="button" class="btn-returned" data-id="${p.id}">🏡 Mark as returned</button>
+      </div>`}`;
+    card.querySelectorAll('.gallery img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.dataset.full));
+    });
     if (!isReturned) {
-      card.querySelector('.btn-returned').addEventListener('click', async () => {
-        const btn = card.querySelector('.btn-returned');
+      card.querySelector('.btn-returned').addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
         btn.disabled = true;
         const { error } = await sb.from('posts').update({ status: 'returned' }).eq('id', p.id);
         if (error) {
@@ -515,13 +702,13 @@
     const returned = posts.filter(p => p.status === 'returned');
 
     if (active.length === 0) {
-      activeList.innerHTML = '<div class="empty-note">No active posts right now — the board is all clear! 🎉</div>';
+      activeList.innerHTML = '<div class="empty-note">🌱 No active posts right now.<br>Be the first to help a pet — post one above!</div>';
     } else {
       activeList.innerHTML = '';
       active.forEach(p => activeList.appendChild(buildCard(p, false)));
     }
     if (returned.length === 0) {
-      returnedList.innerHTML = '<div class="empty-note">No returned pets yet. When a pet is marked returned, it moves here. 🐾</div>';
+      returnedList.innerHTML = '<div class="empty-note">🏠 No happy endings yet.<br>When a pet is marked returned, it moves here to celebrate. 🎉</div>';
     } else {
       returnedList.innerHTML = '';
       returned.forEach(p => returnedList.appendChild(buildCard(p, true)));
@@ -533,7 +720,7 @@
     const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
     if (error) {
       banner.className = 'banner error';
-      banner.textContent = '⚠️ Could not load posts: ' + error.message + ' — did you run schema.sql in Supabase?';
+      banner.textContent = '⚠️ Could not load posts: ' + error.message;
       return;
     }
     banner.className = 'banner';
@@ -553,39 +740,58 @@
     const area = document.getElementById('pet-area').value.trim();
     const note = document.getElementById('pet-note').value.trim();
     const contact = document.getElementById('pet-contact').value.trim();
+    const reward = document.getElementById('pet-reward').value.trim();
     if (!area || !note || !contact) {
       msg.className = 'form-msg error';
-      msg.textContent = 'Please fill in the area, a short note, and your contact so neighbours can reach you.';
+      msg.textContent = 'Please fill in the area, a short note, and your contact so neighbours can reach you. 💛';
+      return;
+    }
+    if (photos.length === 0) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Please add at least one photo or pick a sticker below the photo box.';
       return;
     }
     submitBtn.disabled = true;
-    const { error } = await sb.from('posts').insert({
+    submitBtn.textContent = 'Posting…';
+    const payload = {
       status: selectedStatus,
       type: document.getElementById('pet-type').value,
       name: document.getElementById('pet-name').value.trim(),
       area, note, contact,
-      photo: selectedPhoto
-    });
+      reward: reward || null,
+      photo: photos.length ? null : selectedPhoto,
+      photos: photos
+    };
+    const { error } = await sb.from('posts').insert(payload);
     submitBtn.disabled = false;
+    submitBtn.textContent = '➕ Post to the board';
     if (error) {
       msg.className = 'form-msg error';
       msg.textContent = 'Could not post: ' + error.message;
       return;
     }
     form.reset();
+    photos = [];
     selectedPhoto = '🐱';
     selectedStatus = 'lost';
     document.querySelectorAll('.status-toggle button').forEach(b => b.classList.toggle('selected', b.dataset.status === 'lost'));
-    document.querySelectorAll('#photo-choices button').forEach(b => b.classList.toggle('selected', b.dataset.photo === '🐱'));
-    renderPhoto();
+    document.querySelectorAll('.emoji-row button').forEach(b => b.classList.toggle('selected', b.dataset.photo === '🐱'));
+    renderThumbs();
     msg.className = 'form-msg success';
-    msg.textContent = 'Posted! Your pet is now on the active board below. 🐾';
+    msg.textContent = 'Posted! Your pet is now on the active board below. Thank you for helping 🐾';
     await loadPosts();
     document.getElementById('active-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     setTimeout(() => { msg.className = 'form-msg'; msg.textContent = ''; }, 4000);
   });
 
-  renderPhoto();
+  // Opening animation: show splash for ~2.2s, then reveal the page
+  const splash = document.getElementById('splash');
+  setTimeout(() => {
+    splash.classList.add('hide');
+    document.body.classList.add('revealed');
+  }, 2200);
+
+  renderThumbs();
   if (sb) loadPosts();
 </script>
 </body>
