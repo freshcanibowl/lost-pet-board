@@ -230,9 +230,78 @@
     font-size: 0.8rem;
     padding: 24px 16px 0;
   }
+
+  /* Opening animation splash */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--peach), #FFF6EC);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    z-index: 100;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  #splash .paws {
+    display: flex;
+    gap: 14px;
+    font-size: 2rem;
+  }
+  #splash .paws span {
+    opacity: 0;
+    animation: pawStep 0.6s ease forwards;
+  }
+  #splash .paws span:nth-child(1) { animation-delay: 0.15s; transform: rotate(-15deg); }
+  #splash .paws span:nth-child(2) { animation-delay: 0.45s; transform: rotate(10deg); }
+  #splash .paws span:nth-child(3) { animation-delay: 0.75s; transform: rotate(-10deg); }
+  #splash .paws span:nth-child(4) { animation-delay: 1.05s; transform: rotate(15deg); }
+  @keyframes pawStep {
+    0%   { opacity: 0; transform: translateY(18px) scale(0.6); }
+    60%  { opacity: 1; transform: translateY(-4px) scale(1.15); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  #splash .title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--coral-dark);
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: titleIn 0.7s ease 1.2s forwards;
+  }
+  #splash .tagline {
+    color: var(--soft);
+    font-size: 0.95rem;
+    opacity: 0;
+    animation: titleIn 0.7s ease 1.6s forwards;
+  }
+  @keyframes titleIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  /* Gentle staggered entrance for the page content after the splash */
+  body.revealed main section {
+    animation: sectionIn 0.5s ease both;
+  }
+  body.revealed main section:nth-of-type(1) { animation-delay: 0.05s; }
+  body.revealed main section:nth-of-type(2) { animation-delay: 0.2s; }
+  body.revealed main section:nth-of-type(3) { animation-delay: 0.35s; }
+  @keyframes sectionIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
+<!-- Opening splash animation -->
+<div id="splash" aria-hidden="true">
+  <div class="paws"><span>🐾</span><span>🐾</span><span>🐾</span><span>🐾</span></div>
+  <div class="title">Lost Pet Board</div>
+  <div class="tagline">Helping pets find their way home 💛</div>
+</div>
+
 <header>
   <div class="paw">🐾</div>
   <h1>Lost Pet Board</h1>
@@ -329,6 +398,15 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_yKmkKJanJylwtrJ6PRqrvQ_oiCMlvw6';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // Opening animation: show splash on each visit for ~2.2s, then reveal the page
+  const splash = document.getElementById('splash');
+  setTimeout(() => {
+    splash.classList.add('hide');
+    document.body.classList.add('revealed');
+  }, 2200);
+</script>
+
 <script>
   const imgEl = document.getElementById('photo-img');
   let selectedPhoto = '🐱';
